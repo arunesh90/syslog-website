@@ -1,0 +1,8 @@
+.vscode/
+node_modules/
+transpiled/
+.next/
+.env
+*.log
+ssl/
+client/.next/
