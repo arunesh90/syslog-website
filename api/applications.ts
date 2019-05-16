@@ -136,7 +136,7 @@ router.get('/:applicationId/logs/search', async (req, res) => {
   const esResult = await esClient.search({
     index: `syslog-${application.id}`,
     sort : 'time:desc',
-    size : 50,
+    size : 75,
     body : {
       query: {
         match: {
@@ -163,7 +163,7 @@ router.get('/:applicationId/logs/recent', async (req, res) => {
   const esResult = await esClient.search({
     index: `syslog-${application.id}`,
     sort : 'time:desc',
-    size : 50
+    size : 75
   })
 
   res.send((esResult.body as searchResult).hits.hits.map(result => {
@@ -212,7 +212,7 @@ router.get('/:applicationId/logs/history', async (req, res) => {
   const esResult = await esClient.search({
     index: `syslog-${application.id}`,
     sort : 'time:desc',
-    size : 50,
+    size : 75,
     body : {
       query: query
     }
