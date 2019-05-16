@@ -1,7 +1,7 @@
 {
-  "name": "syslog-wwww",
+  "name": "syslog-www",
   "version": "1.0.0",
-  "description": "Website for syslog",
+  "description": "React web application for viewing logs in real-time",
   "main": "main.ts",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
@@ -9,14 +9,14 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+ssh://git@gitlab.com/arunesh90/syslog-website.git"
+    "url": "git+ssh://git@github.com/arunesh90/syslog-website.git"
   },
   "author": "Arunesh <hello@arunesh.me>",
   "license": "UNLICENSED",
   "bugs": {
-    "url": "https://gitlab.com/arunesh90/syslog-website/issues"
+    "url": "https://github.com/arunesh90/syslog-website/issues"
   },
-  "homepage": "https://gitlab.com/arunesh90/syslog-website#readme",
+  "homepage": "https://github.com/arunesh90/syslog-website",
   "devDependencies": {
     "@types/connect-redis": "^0.0.9",
     "@types/dotenv": "^6.1.1",
