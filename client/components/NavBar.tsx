@@ -9,7 +9,6 @@ interface NavBarProps {
 }
 
 export default class AppNavBar extends Component<NavBarProps> {
-
   render () {
     const { user }    = this.props.session
     const customItems = this.props.customItems ? this.props.customItems.map((customItem) => {
@@ -22,10 +21,14 @@ export default class AppNavBar extends Component<NavBarProps> {
           <Navbar className="custom-navbar" style={{backgroundColor: 'rgb(44, 57, 71)'}}>
             <NavbarBrand>
               <NavbarItem>
-                <figure className="image is-32x32">
-                  <img src="/static/img/logIcon.svg" style={{ transform: 'scale(1.25)' }} />
-                </figure>
-                <Link href={'/app/dashboard'}><p id="app-title">Syslog</p></Link>
+                <Link prefetch passHref href={'/app/dashboard'}>
+                  <a>
+                    <figure className="image is-32x32">
+                      <img src="/static/img/logIcon.svg" style={{ transform: 'scale(1.25)' }} />
+                    </figure>
+                  </a>
+                </Link>
+                <p id="app-title">Syslog</p>
               </NavbarItem>
             </NavbarBrand>
             <NavbarMenu>
