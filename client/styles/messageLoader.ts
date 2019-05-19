@@ -1,6 +1,6 @@
 import { SerializedStyles, css } from "@emotion/core"
 
-export const recentLoaderOveride = css(`
+export const recentLoaderOverride = css(`
   justify-content: center;
   position       : absolute;
   top            : 50%;
@@ -8,7 +8,7 @@ export const recentLoaderOveride = css(`
   transform      : translate(-50%, -50%);
 `) as (SerializedStyles & string)
 
-export const olderLoaderOveride = css(`
+export const olderLoaderOverride = css(`
   justify-content: center;
   position       : relative;
   top            : 1rem;

@@ -12,7 +12,7 @@ import ScrollArea from 'react-custom-scrollbars'
 import { RotateLoader, BeatLoader } from 'react-spinners'
 import RecentBar from "../../components/RecentBar"
 import { syslogMessage } from "../../../types/syslog"
-import { recentLoaderOveride, olderLoaderOveride } from "../../styles/messageLoader"
+import { recentLoaderOverride, olderLoaderOverride } from "../../styles/messageLoader"
 import SearchBar from "../../components/SearchBar"
 import { Helmet } from "react-helmet"
 
@@ -266,9 +266,9 @@ export default class LogsPage extends Component<LogsProps, LogsState> {
           <ScrollArea universal onScroll={this.onScroll} ref={this.scrollBar} renderThumbVertical={({ style, ...props }) =>
             <div {...props} className={`custom-scrollbar`} style={{ ...style }}/>
           }>
-            <RotateLoader css={recentLoaderOveride} color={'#4e6277'} loading={this.state.mainLoading}/>
+            <RotateLoader css={recentLoaderOverride} color={'#4e6277'} loading={this.state.mainLoading}/>
             <ul id="log-events" style={{marginLeft: 1}}>
-              <BeatLoader key={'messageLoader'} css={olderLoaderOveride} color={'#4e6277'} loading={loadingOlder}/>
+              <BeatLoader key={'messageLoader'} css={olderLoaderOverride} color={'#4e6277'} loading={loadingOlder}/>
               {this.state.eventMessages}
             </ul>
           </ScrollArea>
