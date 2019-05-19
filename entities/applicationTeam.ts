@@ -8,15 +8,15 @@ export default class applicationTeam extends BaseEntity {
   @Column()
   name: string;
 
-  @Column({type: 'simple-array', transformer: {
-    from: (array: string[]) => array.map(parseInt),
-    to  : (array: number[]) => array
-  }})
-  memberIds: number[]
+  @Column()
+  ownerId: number;
 
-  @CreateDateColumn({type: 'datetime'})
+  @Column({type: 'simple-array'})
+  memberIds: number[];
+
+  @CreateDateColumn({type: 'timestamptz'})
   createdAt: Date;
 
-  @UpdateDateColumn({type: 'datetime'})
+  @UpdateDateColumn({type: 'timestamptz'})
   updatedAt: Date;
 }

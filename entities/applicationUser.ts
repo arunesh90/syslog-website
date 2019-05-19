@@ -11,9 +11,9 @@ export default class applicationUser extends BaseEntity {
   @Column()
   githubUsername: string;
 
-  @CreateDateColumn({type: 'datetime'})
+  @CreateDateColumn({type: 'timestamptz'})
   createdAt: Date;
 
-  @UpdateDateColumn({type: 'datetime'})
+  @UpdateDateColumn({type: 'timestamptz'})
   updatedAt: Date;
 }

@@ -18,9 +18,9 @@ export default class applicationEntity extends BaseEntity {
   @Column({nullable: true})
   ownerId?: number;
  
-  @CreateDateColumn({type: 'datetime'})
+  @CreateDateColumn({type: 'timestamptz'})
   createdAt: Date;
 
-  @UpdateDateColumn({type: 'datetime'})
+  @UpdateDateColumn({type: 'timestamptz'})
   updatedAt: Date;
 }
