@@ -70,6 +70,7 @@ router.get('/list', async (req, res) => {
 })
 
 router.param('applicationId', async (req, res, next, applicationId) => {
+  console.time('applicationParam')
   const user: userSession['user'] = req.user
 
   // Fetch application
@@ -86,6 +87,7 @@ router.param('applicationId', async (req, res, next, applicationId) => {
   // Check if user is owner of the application
   const { ownerId, teamId } = application
   if (ownerId === user!.id) {
+    console.timeEnd('applicationParam')
     req.application = application
     return next()
   }
@@ -97,11 +99,13 @@ router.param('applicationId', async (req, res, next, applicationId) => {
     const team = await teamRepo.findOne(teamId)
     
     if (team && team.memberIds.includes(user!.id)) {
+      console.timeEnd('applicationParam')
       req.application = application
       return next()
     }
   }
 
+  console.timeEnd('applicationParam')
   // Return with 403 if user failed checks
   res.status(403).send({
     code   : 403,
