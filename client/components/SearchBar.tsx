@@ -1,11 +1,11 @@
-import { Component, FormEvent, ChangeEvent } from "react"
+import { Component, ChangeEvent } from "react"
 
 interface SearchBarProps {
   onInput: ((event: ChangeEvent<HTMLInputElement>) => void)
 }
 
 export default class SearchBar extends Component<SearchBarProps> {
-  render () {
+ render () {
     return (
       <div className="field">
         <div id="outerSearchBar" className="control has-icons-right">
