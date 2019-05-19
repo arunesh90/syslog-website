@@ -1,1 +1,0 @@
-export const isActive = (location: any, url: string) => !!location.pathname.includes(url)
