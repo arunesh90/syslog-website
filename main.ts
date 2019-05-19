@@ -22,6 +22,7 @@ import chalk from 'chalk'
 import { createServer as createSecureServer, Server } from 'https'
 import loadDirScripts from './utils/loadDirScripts'
 import cookieParser from './utils/cookieParser'
+import bodyParser from 'body-parser'
 
 export const server = express()
 export const nextApp = next({
@@ -100,6 +101,7 @@ nextApp.prepare().then(() => {
     }))
     server.use(passport.initialize()) 
     server.use(passport.session())
+    server.use(bodyParser.json())
     
     const routes = loadDirScripts<express.Router>(__dirname, './routes')
     
