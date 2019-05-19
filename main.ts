@@ -69,7 +69,7 @@ expressWs(server, httpsServer!, {
       // Parse session ID
       sessionId = sessionId.substring(2).split('.')[0]
 
-      sessionStore.get(sessionId, (err: any, session) => {
+      sessionStore.get(sessionId, (err: Error, session) => {
         if (err) {
           console.error('An issue has occured while trying to get a session', err)
           return cb(false, 500, 'Failed trying to get session info')
