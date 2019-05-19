@@ -7,5 +7,6 @@ const apiRoutes = loadDirScripts<Router>(__dirname, '../api')
 
 router.use('/applications', apiRoutes.applications)
 router.use('/session', apiRoutes.session)
+router.use('/teams', apiRoutes.teams)
 
 export default router
