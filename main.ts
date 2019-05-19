@@ -1,9 +1,5 @@
 import 'source-map-support/register'
-
-// Import environment variables from .env if available
-import { config } from 'dotenv'
-config()
-
+import 'dotenv/config'
 // import APM from 'elastic-apm-node'
 import { hostname, env } from './utils/constants'
 console.log(`Starting in ${env} mode`)
