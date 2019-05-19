@@ -34,14 +34,9 @@ h1 {
 .searchBar {
   width           : 15rem;
   height          : 2rem;
-  // border-radius   : 5px;
   border          : 0;
-  color: whitesmoke;
-  // color           : rgb(9, 10, 10);
+  color           : whitesmoke;
   background-color: rgb(60, 74, 88);
-  // font-family     : Whitney, Helvetica Neue, Helvetica, Arial, sans-serif;
-  // padding-left    : 5px;
-  // padding-right   : 5px;
 
   &::placeholder {
     color: rgb(31, 35, 39);
@@ -108,7 +103,8 @@ h1 {
   }
 
   > #logs-container {
-    flex: 1;
+    flex          : 1;
+    padding-bottom: 1px;
   }
 }
 

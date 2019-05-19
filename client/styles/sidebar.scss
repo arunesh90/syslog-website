@@ -1,0 +1,46 @@
+.sidebar {
+  height          : 100%;
+  width           : 2.5rem;
+  position        : fixed;
+  z-index         : 1;
+  top             : 0;
+  left            : 0;
+  background-color: rgb(73, 89, 105);
+  padding-top     : 3.28rem;
+  box-shadow      : 1px 0px 15px black;
+
+  > hr {
+    margin          : 0;
+    height          : 1px;
+    background-color: grey;
+  }
+
+  > .sidebar-active {
+    background-color: rgb(97, 114, 131);
+  }
+
+  > .sidebar-item {
+    height         : 2.5rem;
+    width          : 2.5rem;
+    display        : flex;
+    align-items    : center;
+    justify-content: center;
+    cursor         : pointer;
+
+    > .sidebar-icon {
+      width: 1.25rem;
+      color: black;
+    }
+
+    &:hover {
+      background-color: rgb(97, 114, 131);
+    }
+  }
+
+  > .sidebar-icon {
+    justify-content: center;
+    align-items    : center;
+    width          : 2.5rem;
+    height         : 2rem;
+  }
+}
