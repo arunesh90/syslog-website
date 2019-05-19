@@ -5,10 +5,14 @@ import applicationUser from "../entities/applicationUser"
 
 export default async function connect () {
   return createConnection({
-    type       : 'mysql',
+    type       : 'postgres',
     url        : process.env.SQL_URI,
     database   : 'syslog',
-    entities   : [application, applicationTeam, applicationUser],
-    synchronize: true
+    synchronize: true,
+    entities   : [
+      application,
+      applicationTeam,
+      applicationUser
+    ]
   })
 }
