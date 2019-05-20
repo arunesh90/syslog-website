@@ -12,10 +12,14 @@ import { Helmet } from "react-helmet"
 import { RotateLoader } from "react-spinners"
 import { recentLoaderOverride as loaderOverride } from "../../styles/messageLoader"
 import Router, { withRouter, SingletonRouter } from "next/router"
+import { TeamsProvider } from '../../context/teams'
+import { getTeams } from '../../scripts/teams'
+import applicationTeam from '../../../entities/applicationTeam'
 
 interface DashboardProps {
   session     : userSession,
   applications: applicationEntity[],
+  teams       : applicationTeam[],
   router      : SingletonRouter
 }
 
@@ -46,10 +50,12 @@ class DashboardPage extends Component<DashboardProps, DashboardState> {
   static async getInitialProps (ctx: NextContext) {
     const session      = await getSession(ctx)
     const applications = await getApplications(ctx)
+    const teams        = await getTeams(ctx)
     
     return {
       session,
-      applications
+      applications,
+      teams
     }
   }
 
@@ -98,7 +104,7 @@ class DashboardPage extends Component<DashboardProps, DashboardState> {
   }
 
   render () {
-    const { applications, session } = this.props
+    const { applications, session, teams } = this.props
     const ActiveItem                = dynamicLoad(
       () => import(`../../components/Dashboard/${this.state.activeItem}`), {
         loading: () => <RotateLoader css={loaderOverride} color={'#4e6277'} loading={true}/>
@@ -107,36 +113,38 @@ class DashboardPage extends Component<DashboardProps, DashboardState> {
 
     return (
       <SessionProvider value={session}>
-        <Helmet>
-          <script defer src="https://use.fontawesome.com/releases/v5.8.2/js/solid.js" />
-          <script defer src="https://use.fontawesome.com/releases/v5.8.2/js/fontawesome.js" />
-        </Helmet>
         <ApplicationsProvider value={applications}>
-          <AppNavBar session={session}>
-            <aside className="sidebar">
-              <div onClick={() => this.changeItem('main')} id="sidebar-main" className="sidebar-item" title="Main">
-                <div className="sidebar-icon">
-                  <i className="fas fa-home"/>
+          <TeamsProvider value={teams}>
+            <Helmet>
+              <script defer src="https://use.fontawesome.com/releases/v5.8.2/js/solid.js" />
+              <script defer src="https://use.fontawesome.com/releases/v5.8.2/js/fontawesome.js" />
+            </Helmet>
+            <AppNavBar session={session}>
+              <aside className="sidebar">
+                <div onClick={() => this.changeItem('main')} id="sidebar-main" className="sidebar-item" title="Main">
+                  <div className="sidebar-icon">
+                    <i className="fas fa-home"/>
+                  </div>
                 </div>
-              </div>
-              <hr/>
-              <div onClick={() => this.changeItem('applications')} id="sidebar-applications" className="sidebar-item" title="Applications">
-                <div className="sidebar-icon">
-                  <i className="fas fa-list"/>
+                <hr/>
+                <div onClick={() => this.changeItem('applications')} id="sidebar-applications" className="sidebar-item" title="Applications">
+                  <div className="sidebar-icon">
+                    <i className="fas fa-list"/>
+                  </div>
                 </div>
-              </div>
-              <hr/>
-              <div onClick={() => this.changeItem('teams')} className="sidebar-item" id="sidebar-teams" title="Teams">
-                <div className="sidebar-icon">
-                  <i className="fas fa-users"/>
+                <hr/>
+                <div onClick={() => this.changeItem('teams')} className="sidebar-item" id="sidebar-teams" title="Teams">
+                  <div className="sidebar-icon">
+                    <i className="fas fa-users"/>
+                  </div>
                 </div>
-              </div>
-            </aside>
+              </aside>
 
-            <div style={{marginLeft: '2.5rem'}}>
-              <ActiveItem/>
-            </div>
-          </AppNavBar>
+              <div style={{marginLeft: '2.5rem'}}>
+                <ActiveItem/>
+              </div>
+            </AppNavBar>
+          </TeamsProvider>
         </ApplicationsProvider>
       </SessionProvider>
     )

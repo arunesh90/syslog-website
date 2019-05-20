@@ -1,5 +1,5 @@
 import { createContext } from "react"
-import applicationEntity from "../../entities/application";
+import applicationEntity from "../../entities/application"
 
 const applicationsContext = createContext<applicationEntity[] | null>(null)
 
