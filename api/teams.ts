@@ -57,7 +57,7 @@ router.param('teamId', async (req, res, next, teamId) => {
 
 router.post('/create', async (req, res) => {
   const user: userSession['user'] = req.user
-  const { body } = req
+  const { body }                  = req
 
   try {
     await applicationTeamSchema.validate(body)
@@ -91,7 +91,6 @@ router.post('/create', async (req, res) => {
   }
 
   await newTeam.save()
-
   return res.send(newTeam)
 })
 
