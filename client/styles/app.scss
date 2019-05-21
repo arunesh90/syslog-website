@@ -1,5 +1,5 @@
 // Bulma options
-$body-background-color: rgb(28, 38, 50);
+$body-background-color           : rgb(28, 38, 50);
 
 // Misc options
 $navbar-background-color: rgb(44, 57, 71);
@@ -29,6 +29,11 @@ h1 {
 
 .custom-navbar {
   box-shadow: 0px 0px 8px 2px #000000;
+}
+
+.addButton {
+  margin-left  : 0.75rem;
+  transform    : scale(0.75);
 }
 
 .searchBar {

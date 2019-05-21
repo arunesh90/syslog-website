@@ -1,0 +1,10 @@
+.pbottom10 {
+  padding-bottom: 10px; 
+}
+
+
+.allInline {
+  > * {
+    display: inline;
+  }
+}

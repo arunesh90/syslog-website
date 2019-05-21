@@ -27,6 +27,7 @@ interface DashboardState {
   activeItem: string
 }
 
+import '../../styles/utilities.scss'
 import '../../styles/sidebar.scss'
 import '../../styles/app.scss'
 
