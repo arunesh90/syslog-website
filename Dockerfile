@@ -1,9 +1,16 @@
 FROM node:11-alpine
 
+# Set build variables for prod image
+ENV HOSTNAME      = "local.snoozing.dev"
+
 WORKDIR /app
 
-CMD [ "ts-node", "main" ]
+CMD [ "node", "main" ]
 
 COPY . /app
 
-RUN yarn && yarn global add typescript next react react-dom ts-node && next build client/
+RUN yarn global add typescript next react react-dom
+RUN yarn && tsc
+RUN next build client/ && cp client/.next/ transpiled/client/ -r
+
+WORKDIR /app/transpiled

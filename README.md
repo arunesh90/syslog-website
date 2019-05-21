@@ -1,4 +1,5 @@
 # Syslog Web Application
+[![pipeline status](https://gitlab.com/arunesh90/syslog-website-mirror/badges/master/pipeline.svg)](https://gitlab.com/arunesh90/syslog-website-mirror/commits/master)
 
 _I have yet to decide on a final name for this project_
 
