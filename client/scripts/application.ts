@@ -1,18 +1,26 @@
 import { NextContext } from "next"
 import applicationEntity from "../../entities/application"
 import { syslogMessage } from "../../types/syslog"
-import sendAPIRequest from "./api"
+import sendAPIRequest, { postAPIRequest } from "./api"
+import { AddApplicationForm } from '../components/Dashboard/main';
 
 export const getApplications = async (ctx: NextContext): Promise<applicationEntity[]> => {
-  return sendAPIRequest('applications/list', ctx)
+  return sendAPIRequest('applications/list', { ctx })
 }
 
 export const getApplication = async (ctx: NextContext, applicationId: string): Promise<applicationEntity> => {
-  return sendAPIRequest(`applications/${applicationId}`, ctx)
+  return sendAPIRequest(`applications/${applicationId}`, { ctx })
 }
 
 export const getRecentLogs = async (applicationId: number): Promise<syslogMessage[]> => {
   return sendAPIRequest(`applications/${applicationId}/logs/recent`)
+}
+
+export const addApplication = async (form: AddApplicationForm) => {
+  return postAPIRequest(`applications/create`, {
+    method: 'POST',
+    body  : form,
+  })
 }
 
 interface logHistoryOptions {
@@ -26,6 +34,7 @@ export const historyLogs = async (applicationId: number, searchOptions: logHisto
   if (searchOptions.content) {
     apiURL += `&content=${encodeURI(searchOptions.content)}`
   }
+
   console.log(apiURL)
   return sendAPIRequest(apiURL)
 }

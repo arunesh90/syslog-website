@@ -11,6 +11,8 @@ import esClient from '../database/elasticsearch'
 import { getById } from './utils/applicationCache'
 import { searchResult } from '../types/elasticsearch'
 import { Search } from '@elastic/elasticsearch/api/requestParams'
+import applicationSchema from '../schemas/application'
+import cryptoRandomString from 'crypto-random-string'
 
 const router            = Router()
 const applicationRoutes = loadDirScripts<Router | WebsocketRequestHandler>(__dirname, './applications')
@@ -67,6 +69,53 @@ router.get('/list', async (req, res) => {
       updatedAt: application.updatedAt
     }
   }))
+})
+
+router.post('/create', async (req, res) => {
+  const user: userSession['user'] = req.user
+  const { body }                  = req
+
+  try {
+    await applicationSchema.validate(body)
+  } catch (error) {
+    return res.status(400).send({
+      code   : 400,
+      message: error.message
+    })
+  }
+
+  const newApplication      = new applicationEntity()
+        newApplication.name = body.name
+  
+  if (body.teamId) {
+    const teamRepo = getRepository(applicationTeam)
+    const team     = await teamRepo.findOne(body.teamId)
+
+    if (!team) {
+      return res.status(400).send({
+        code: 400,
+        message: 'Unknown team'
+      })
+    } if (!team.memberIds.includes(user!.id)) {
+      return res.status(403).send({
+        code: 403,
+        message: 'You don\'t have access to this team'
+      })
+    }
+
+    newApplication.teamId = body.teamId
+  } else {
+    newApplication.ownerId = user!.id
+  }
+
+  // Generate application key
+  newApplication.key = cryptoRandomString({
+    length: 20
+  })
+
+  await newApplication.save()
+
+  return res.send(newApplication)
 })
 
 router.param('applicationId', async (req, res, next, applicationId) => {
