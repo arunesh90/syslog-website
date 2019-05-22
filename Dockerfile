@@ -1,8 +1,8 @@
 FROM node:11-alpine
 
 # Set build variables for prod image
-ENV HOSTNAME      = "local.snoozing.dev"
-ENV HTTPS_ENABLED = "true"
+ENV HOSTNAME="local.snoozing.dev"
+ENV HTTPS_ENABLED=true
 
 WORKDIR /app
 
