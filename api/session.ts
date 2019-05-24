@@ -1,5 +1,5 @@
 import { Router } from 'express'
-import userSession from '../types/session'
+import userSession, { githubUser } from '../types/session'
 
 const router = Router()
 
@@ -12,8 +12,7 @@ router.get('/info', (req, res) => {
   }
 
   if (user) {
-    // @ts-ignore
-    const github = user.profile['_json']
+    const github = user.profile['_json'] as githubUser
     body.isAuthenticated = true
 
     body.user = {

@@ -17,3 +17,12 @@ export default interface userSession {
     }
   } | null
 }
+
+export interface githubUser {
+  login     : string,
+  id        : number,
+  avatar_url: string,
+  name      : string,
+  location  : string,
+  email     : string
+}

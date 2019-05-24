@@ -23,7 +23,7 @@ const middleware = new Strategy({
     console.log(`Created new user for ${profile.username}`)
   }
 
-  return cb(false, Object.assign(user, {profile}))
+  return cb(null, Object.assign(user, {profile}))
 })
 
 export default middleware
