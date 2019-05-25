@@ -10,9 +10,9 @@ CMD [ "node", "main" ]
 
 COPY . /app
 
-RUN yarn global add typescript next react react-dom
-RUN yarn && echo "Compiling TypeScript.." && time tsc
+RUN yarn global add typescript next react react-dom && yarn
 RUN next build client/ && cp client/ transpiled/ -r
-RUN mv client/static/ transpiled/client/static/
+RUN echo "Compiling TypeScript.." && time tsc
+# RUN mv client/static/ transpiled/client/static/
 
 WORKDIR /app/transpiled
