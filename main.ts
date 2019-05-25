@@ -1,14 +1,14 @@
 import 'source-map-support/register'
 import 'dotenv/config'
-// import APM from 'elastic-apm-node'
+import APM from 'elastic-apm-node'
 import { hostname, env } from './utils/constants'
 console.log(`Starting in ${env} mode`)
 
 // Add Elastic APM
-// APM.start({
-//   serviceName: `syslog-website-${env}`,
-//   serverUrl  : process.env.APM_HOST
-// })
+APM.start({
+  serviceName: `syslog-website-${env}`,
+  serverUrl  : process.env.APM_HOST
+})
 
 import express from 'express'
 import expressWs from 'express-ws'
