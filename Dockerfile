@@ -6,13 +6,9 @@ ENV HTTPS_ENABLED=true
 
 WORKDIR /app
 
-CMD [ "node", "main" ]
+CMD [ "ts-node", "-T", "main" ]
 
 COPY . /app
 
-RUN yarn global add typescript next react react-dom
-RUN yarn && next build client/ # && cp client/.next/ transpiled/client/ -r
-RUN echo "Compiling TypeScript.." && time tsc
-# RUN mv client/static/ transpiled/client/static/
-
-# WORKDIR /app/transpiled
+RUN yarn global add typescript next react ts-node react-dom
+RUN yarn && next build client/
