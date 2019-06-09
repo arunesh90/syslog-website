@@ -81,7 +81,6 @@ class DashboardPage extends Component<DashboardProps, DashboardState> {
     const newSubItem              = router.query['subItem'] as string
 
     if (this.state.activeItem !== newItem || this.state.activeSubItem !== newSubItem) {
-      console.log('item changed to', newItem)
       this.setState({
         activeItem   : newItem,
         activeSubItem: newSubItem
