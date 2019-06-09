@@ -155,7 +155,9 @@ class DashboardPage extends Component<DashboardProps, DashboardState> {
           this.changeItem('main', null, '/app/dashboard')
           return
         }
+
         console.error(err)
+        throw err
       }), {
         loading: () => <RotateLoader css={loaderOverride} color={'#4e6277'} loading={true} />,
         ssr    : false
