@@ -99,7 +99,7 @@ class DashboardPage extends Component<DashboardProps, DashboardState> {
       newElement.classList.add('sidebar-active')
     }
 
-    console.log('item changed to', newItem)
+
     this.setState({
       activeItem   : newItem,
       activeSubItem: subItem
@@ -143,7 +143,7 @@ class DashboardPage extends Component<DashboardProps, DashboardState> {
     if (activeSubItem) {
       activeComponent += `/${activeSubItem}`
     }
-    console.log(activeComponent, router.query)
+
     const ActiveItem = dynamicLoad(
       () => import(`../../components/Dashboard/${activeComponent}`)
       .catch((err: {
