@@ -71,21 +71,23 @@ class DashboardPage extends Component<DashboardProps, DashboardState> {
     }
   }
 
-  // componentDidUpdate () {
-  //   // this.refreshPage()
-  // }
+  componentDidUpdate () {
+    this.refreshPage()
+  }
 
-  // refreshPage () {
-  //   const router: SingletonRouter = this.props.router!
-  //   const newItem                 = router.query!['item'] as string
+  refreshPage () {
+    const router: SingletonRouter = this.props.router!
+    const newItem                 = router.query['item']    as string
+    const newSubItem              = router.query['subItem'] as string
 
-  //   if (this.state.activeItem !== newItem) {
-  //     console.log('item changed to', newItem)
-  //     this.setState({
-  //       activeItem: newItem
-  //     })
-  //   }
-  // }
+    if (this.state.activeItem !== newItem || this.state.activeSubItem !== newSubItem) {
+      console.log('item changed to', newItem)
+      this.setState({
+        activeItem   : newItem,
+        activeSubItem: newSubItem
+      })
+    }
+  }
 
   changeItem (newItem: string, subItem?: string, asUrl?: string) {
     const router: SingletonRouter = this.props.router
@@ -138,9 +140,9 @@ class DashboardPage extends Component<DashboardProps, DashboardState> {
     const { activeItem, activeSubItem }            = this.state
 
     // Load active item
-    let activeComponent = `${activeItem}`
-    if (router.query.subItem || activeSubItem) {
-      activeComponent += `/${router.query.subItem || activeSubItem}`
+    let activeComponent = activeItem
+    if (activeSubItem) {
+      activeComponent += `/${activeSubItem}`
     }
     console.log(activeComponent, router.query)
     const ActiveItem = dynamicLoad(
