@@ -1,6 +1,6 @@
 import { Router } from "express"
 import userSession from "../types/session"
-import { getRepository, In } from "typeorm"
+import { getRepository } from "typeorm"
 import applicationTeam from "../entities/applicationTeam"
 import applicationTeamSchema from '../schemas/applicationTeam'
 import applicationUser from '../entities/applicationUser'
@@ -23,11 +23,10 @@ router.get('/list', async (req, res) => {
   const teamRepo                  = getRepository(applicationTeam)
 
   // Fetch all teams that user is a part of
-  const teams = await teamRepo.find({
-    where: {
-      memberIds: In([user!.id])
-    }
-  })
+  const teams = await teamRepo
+    .createQueryBuilder('applicationUser')
+    .where(':userId = ANY ("memberIds")', {userId: user!.id})
+    .getMany()
 
   res.send(teams)
 })

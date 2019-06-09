@@ -30,6 +30,8 @@ export const nextApp = next({
   dir: './client'
 })
 
+import nextRoutes from './routes/next'
+
 // Setup session store
 const RedisStore = connectRedis(expressSession)
 export const sessionStore = new RedisStore({
@@ -83,7 +85,6 @@ expressWs(server, httpsServer!, {
   }
 })
 
-const nextHandler = nextApp.getRequestHandler()
 nextApp.prepare().then(() => {
   // Connect to database
   sqlConnect().then(() => {
@@ -113,19 +114,7 @@ nextApp.prepare().then(() => {
     server.use('/api', routes.api)
 
     // Next.JS routes
-    server.get('/app/*', (req, res, next) => {
-      if (!req.user) {
-        return res.redirect('/')
-      }
-
-      next()
-    })
-    server.get('/app/application/:id/logs', (req, res) => {
-      nextApp.render(req, res, '/app/logs', {id: req.params.id})
-    })
-    server.get('*', (req, res) => {
-      nextHandler(req, res)
-    })
+    server.use(nextRoutes)
 
     // Create HTTP server
     const httpPort = process.env.HTTP_PORT || 80

@@ -1,6 +1,6 @@
 import { Component } from 'react'
-import { TeamsConsumer } from '../../../context/teams'
-import { SessionConsumer } from '../../../context/session'
+import { TeamsConsumer } from '../../context/teams'
+import { SessionConsumer } from '../../context/session';
 
 export default class DashboardTeamsInfo extends Component {
   render () {

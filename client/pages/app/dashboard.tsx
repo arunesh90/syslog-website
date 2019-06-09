@@ -1,20 +1,20 @@
-import { Component } from "react"
-import { getSession } from "../../scripts/session"
-import { NextContext } from "next"
-import userSession from "../../../types/session"
-import AppNavBar from "../../components/NavBar"
-import { getApplications } from "../../scripts/application"
-import applicationEntity from "../../../entities/application"
-import { SessionProvider } from "../../context/session"
-import { ApplicationsProvider } from "../../context/applications"
-import dynamicLoad from 'next/dynamic'
-import { Helmet } from "react-helmet"
-import { RotateLoader } from "react-spinners"
-import { recentLoaderOverride as loaderOverride } from "../../styles/messageLoader"
-import Router, { withRouter, SingletonRouter } from "next/router"
-import { TeamsProvider } from '../../context/teams'
-import { getTeams } from '../../scripts/teams'
+import { Component, RefObject, createRef } from 'react'
+import Router, { withRouter, SingletonRouter } from 'next/router'
+import userSession from '../../../types/session'
+import applicationEntity from '../../../entities/application'
 import applicationTeam from '../../../entities/applicationTeam'
+import { NextContext } from 'next'
+import { getSession } from '../../scripts/session'
+import { getApplications } from '../../scripts/application'
+import { getTeams } from '../../scripts/teams'
+import { SessionProvider } from '../../context/session'
+import { ApplicationsProvider } from '../../context/applications'
+import { TeamsProvider } from '../../context/teams'
+import { RotateLoader } from 'react-spinners'
+import { recentLoaderOverride as loaderOverride } from '../../styles/messageLoader'
+import AppNavBar from '../../components/NavBar'
+import { Helmet} from 'react-helmet'
+import dynamicLoad from 'next/dynamic'
 
 interface DashboardProps {
   session     : userSession,
@@ -24,7 +24,8 @@ interface DashboardProps {
 }
 
 interface DashboardState {
-  activeItem: string
+  activeItem   : string
+  activeSubItem: string | null
 }
 
 import '../../styles/utilities.scss'
@@ -33,18 +34,20 @@ import '../../styles/app.scss'
 
 class DashboardPage extends Component<DashboardProps, DashboardState> {
   constructor (props: DashboardProps) {
-    console.log('test')
     super(props)
 
     const router: SingletonRouter = this.props.router!
     let   activeItem              = 'main'
+    let   activeSubItem           = null
 
     if (router.query) {
-      activeItem = router.query['item'] as string || 'main'
+      activeItem    = router.query['item']    as string || activeItem
+      activeSubItem = router.query['subItem'] as string || activeSubItem
     }
 
-    this.state = {
-      activeItem
+    this.state  = {
+      activeItem,
+      activeSubItem
     }
   }
 
@@ -61,55 +64,101 @@ class DashboardPage extends Component<DashboardProps, DashboardState> {
   }
 
   componentDidMount () {
-    const activeElement = document.getElementById(`sidebar-${this.state.activeItem}`)!
-    activeElement.classList.add('sidebar-active')
-  }
+    const activeElement = document.getElementById(`sidebar-${this.state.activeItem}`)
 
-  componentDidUpdate () {
-    this.refreshPage()
-  }
-
-  refreshPage () {
-    const router: SingletonRouter = this.props.router!
-    const newItem                 = router.query!['item'] as string
-
-    if (this.state.activeItem !== newItem) {
-      console.log('item changed to', newItem)
-      this.setState({
-        activeItem: newItem
-      })
+    if (activeElement) {
+      activeElement.classList.add('sidebar-active')
     }
   }
 
-  changeItem (newItem: string) {
+  // componentDidUpdate () {
+  //   // this.refreshPage()
+  // }
+
+  // refreshPage () {
+  //   const router: SingletonRouter = this.props.router!
+  //   const newItem                 = router.query!['item'] as string
+
+  //   if (this.state.activeItem !== newItem) {
+  //     console.log('item changed to', newItem)
+  //     this.setState({
+  //       activeItem: newItem
+  //     })
+  //   }
+  // }
+
+  changeItem (newItem: string, subItem?: string, asUrl?: string) {
     const router: SingletonRouter = this.props.router
-    const oldElement              = document.getElementById(`sidebar-${this.state.activeItem}`)!
-    const newElement              = document.getElementById(`sidebar-${newItem}`)!
+    const oldElement              = document.getElementById(`sidebar-${this.state.activeItem}`)
+    const newElement              = document.getElementById(`sidebar-${newItem}`)
 
-    oldElement.classList.remove('sidebar-active')
-    newElement.classList.add('sidebar-active')
+    if (oldElement) {
+      oldElement.classList.remove('sidebar-active')
+    } if (newElement) {
+      newElement.classList.add('sidebar-active')
+    }
 
+    console.log('item changed to', newItem)
     this.setState({
-      activeItem: newItem
+      activeItem   : newItem,
+      activeSubItem: subItem
     })
 
     // Push history change
+    console.log({
+      pathname: router.pathname,
+      query   : {
+        item   : newItem,
+        subItem
+      }
+    })
+    let shownURL: string
+    if (asUrl) {
+      shownURL = asUrl  
+    } else if (subItem) {
+      shownURL = `${router.pathname}/${newItem}/${subItem}`
+    } else {
+      shownURL = `${router.pathname}/${newItem}`
+    }
+
     Router.push({
       pathname: router.pathname,
-      query: {
-        item: newItem
+      query   : {
+        item   : newItem,
+        subItem
       }
     }, {
-      pathname: `${router.pathname}/${newItem}`
+      pathname: shownURL
     }, { shallow: true })
   }
 
+
   render () {
-    const { applications, session, teams } = this.props
-    const ActiveItem                = dynamicLoad(
-      () => import(`../../components/Dashboard/${this.state.activeItem}`), {
-        loading: () => <RotateLoader css={loaderOverride} color={'#4e6277'} loading={true}/>
-      }
+    const { applications, session, teams, router } = this.props
+    const { activeItem, activeSubItem }            = this.state
+
+    // Load active item
+    let activeComponent = `${activeItem}`
+    if (router.query.subItem || activeSubItem) {
+      activeComponent += `/${router.query.subItem || activeSubItem}`
+    }
+    console.log(activeComponent, router.query)
+    const ActiveItem = dynamicLoad(
+      () => import(`../../components/Dashboard/${activeComponent}`)
+      .catch((err: {
+        code: string, 
+        stack: string
+      }) => {
+        if (err.code === 'MODULE_NOT_FOUND') {
+          console.error(`Module ${activeComponent} not found`)
+          this.changeItem('main', null, '/app/dashboard')
+          return
+        }
+        console.error(err)
+      }), {
+        loading: () => <RotateLoader css={loaderOverride} color={'#4e6277'} loading={true} />,
+        ssr    : false
+      },
     )
 
     return (
@@ -122,27 +171,28 @@ class DashboardPage extends Component<DashboardProps, DashboardState> {
             </Helmet>
             <AppNavBar session={session}>
               <aside className="sidebar">
-                <div onClick={() => this.changeItem('main')} id="sidebar-main" className="sidebar-item" title="Main">
+                <div onClick={() => this.changeItem('main', null, '/app/dashboard')} id="sidebar-main" className="sidebar-item" title="Main">
                   <div className="sidebar-icon">
-                    <i className="fas fa-home"/>
+                    <i className="fas fa-home" />
                   </div>
                 </div>
                 <hr/>
                 <div onClick={() => this.changeItem('applications')} id="sidebar-applications" className="sidebar-item" title="Applications">
                   <div className="sidebar-icon">
-                    <i className="fas fa-list"/>
+                    <i className="fas fa-list" />
                   </div>
                 </div>
                 <hr/>
                 <div onClick={() => this.changeItem('teams')} className="sidebar-item" id="sidebar-teams" title="Teams">
                   <div className="sidebar-icon">
-                    <i className="fas fa-users"/>
+                    <i className="fas fa-users" />
                   </div>
                 </div>
               </aside>
 
               <div style={{marginLeft: '2.5rem'}}>
-                <ActiveItem/>
+                
+                <ActiveItem />
               </div>
             </AppNavBar>
           </TeamsProvider>

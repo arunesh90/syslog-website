@@ -2,7 +2,7 @@
 
 import { Router } from 'express'
 import applicationEntity from '../entities/application'
-import { In, getRepository } from 'typeorm'
+import { getRepository } from 'typeorm'
 import userSession from '../types/session'
 import applicationTeam from '../entities/applicationTeam'
 import loadDirScripts from '../utils/loadDirScripts'
@@ -42,11 +42,10 @@ router.get('/list', async (req, res) => {
   applications = applications.concat(personalApplications)
   
   // Fetch all teams that user is a part of
-  const teams = await teamRepo.find({
-    where: {
-      memberIds: In([user!.id])
-    }
-  })
+  const teams = await teamRepo
+    .createQueryBuilder('applicationUser')
+    .where(':userId = ANY ("memberIds")', {userId: user!.id})
+    .getMany()
 
   // Fetch all applications that the teams own
   await Promise.all(teams.map((team) => {
@@ -115,6 +114,11 @@ router.post('/create', async (req, res) => {
 
   await newApplication.save()
 
+  // Create index
+  await esClient.indices.create({
+    index: `syslog-${newApplication.id}`
+  })
+
   return res.send(newApplication)
 })
 
@@ -175,6 +179,20 @@ router.get('/:applicationId', (req, res) => {
   })
 })
 
+router.get('/:applicationId/logs/*', async (req, res, next) => {
+  const application = req.application!
+
+  const { body: exists } = await esClient.indices.exists({
+    index: `syslog-${application.id}`
+  })
+
+  if (!exists) {
+    return res.send([])
+  }
+
+  next()
+})
+
 router.get('/:applicationId/logs/search', async (req, res) => {
   const application   = req.application!
   const searchContent = req.query.content
@@ -189,13 +207,13 @@ router.get('/:applicationId/logs/search', async (req, res) => {
   const esResult = await esClient.search({
     index: `syslog-${application.id}`,
     sort : 'time:desc',
-    size : 75,
+    size : 100,
     body : {
       query: {
         match: {
           message: {
             query               : decodeURI(searchContent),
-            minimum_should_match: '75%'
+            minimum_should_match: '80%'
           }
         }
       }
@@ -265,7 +283,7 @@ router.get('/:applicationId/logs/history', async (req, res) => {
   const esResult = await esClient.search({
     index: `syslog-${application.id}`,
     sort : 'time:desc',
-    size : 75,
+    size : 100,
     body : {
       query: query
     }

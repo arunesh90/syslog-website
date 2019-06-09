@@ -1,4 +1,4 @@
-import { BaseEntity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Entity } from "typeorm"
+import { BaseEntity, Column, PrimaryGeneratedColumn, CreateDateColumn, UpdateDateColumn, Entity } from 'typeorm'
 
 @Entity('applicationTeam')
 export default class applicationTeam extends BaseEntity {
@@ -11,7 +11,7 @@ export default class applicationTeam extends BaseEntity {
   @Column()
   ownerId: number;
 
-  @Column({type: 'simple-array'})
+  @Column({type: 'int', array: true})
   memberIds: number[];
 
   @CreateDateColumn({type: 'timestamptz'})

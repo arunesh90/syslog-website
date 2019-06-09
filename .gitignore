@@ -5,3 +5,4 @@ transpiled/
 *.log
 ssl/
 client/.next/
+tools/

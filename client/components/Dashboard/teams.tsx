@@ -12,7 +12,7 @@ export default class DashboardTeams extends Component {
             <Title className="main-title" isSize={3}>Teams</Title>
             <Container className="containerList" style={{ border: '1px solid', borderRadius: 5, padding: 10 }}>
               {teams.map((team) => (
-                <Link key={team.id} passHref href={`/app/dashboard?item=teams?id=${team.id}`} as={`/app/dashboard/teams/${team.id}`}>
+                <Link key={team.id} passHref href={`/app/dashboard?item=teams&subItem=info&id=${team.id}`} as={`/app/dashboard/teams/${team.id}`}>
                   <Button isColor='info'>{team.name}</Button>
                 </Link>
               ))}

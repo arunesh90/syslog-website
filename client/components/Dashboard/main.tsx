@@ -1,11 +1,14 @@
-import { SessionConsumer } from "../../context/session"
-import { Component } from "react"
+import { Component, FormEvent } from 'react'
+import { SessionConsumer } from '../../context/session'
+import { ApplicationsConsumer } from '../../context/applications'
 import Link from 'next/link'
-import { Button, Container, Title, Modal, ModalCard, ModalCardHeader, ModalCardTitle, ModalCardBody, ModalCardFooter, ModalBackground, Input } from "bloomer"
-import { ApplicationsConsumer } from "../../context/applications"
-import { Form, Field } from 'react-final-form'
-import TextInput from '../FormInput'
-import { addApplication } from '../../scripts/application';
+import axios from 'axios'
+import { 
+  Button, Container, Title, Modal, ModalCard, ModalCardHeader, ModalCardTitle, 
+  ModalCardBody, ModalCardFooter, ModalBackground, Input, Notification, Label, Control, 
+  Select 
+} from 'bloomer'
+import { TeamsConsumer } from '../../context/teams';
 
 export interface AddApplicationForm {
   name   : string,
@@ -13,7 +16,8 @@ export interface AddApplicationForm {
 }
 
 interface DashboardMainState {
-  createModalActive: boolean
+  createModalActive: boolean,
+  formNotification?: JSX.Element
 }
 
 export default class DashboardMain extends Component<null, DashboardMainState> {
@@ -25,89 +29,124 @@ export default class DashboardMain extends Component<null, DashboardMainState> {
     }
 
     this.toggleCreateModal = this.toggleCreateModal.bind(this)
+    this.submitApplication = this.submitApplication.bind(this)
   }
 
+  
   toggleCreateModal () {
     this.setState({
       createModalActive: !this.state.createModalActive
     })
   }
 
-  async addApplication (values: AddApplicationForm) {
-    const newApp        = await addApplication(values)
-    console.log(newApp)
+  async submitApplication (event: FormEvent<HTMLFormElement>) {
+    // Prevent reload
+    event.preventDefault()
 
-    setTimeout(() => {
-      location.reload()
-    }, 2000)
+    const formData        = new FormData(event.target as HTMLFormElement)
+    const applicationName = formData.get('applicationName')
+    const teamId          = formData.get('applicationTeamId')
+
+    if (!applicationName) {
+      const notification = <Notification isColor='danger'>Missing application name</Notification>
+      this.setState({
+        formNotification: notification
+      })
+
+      return
+    }
+
+    try {
+      const { data } = await axios({
+        method: 'POST',
+        url: '/api/applications/create',
+        data: {
+          name: applicationName,
+          teamId: teamId || undefined
+        }
+      })
+
+      const formNotification = <Notification isColor='success'>
+        Added! Your application key is <b>{data.key}</b>
+      </Notification>
+
+      this.setState({
+        formNotification
+      })
+    } catch (error) {
+      const notification = <Notification isColor='danger'>API returned a error..</Notification>
+      this.setState({
+        formNotification: notification
+      })
+
+      console.error(error, error.message)
+    }
+
+    // console.log(applicationName, teamId)
   }
 
-  render () {
+  render() {
     return (
       <ApplicationsConsumer>
         { applications => (
           <SessionConsumer>
-            { session => session && applications && (
-              <div>
-                <Modal isActive={this.state.createModalActive}>
-                  <ModalBackground />
-                  <ModalCard>
-                    <ModalCardHeader>
-                      <ModalCardTitle>Add Application</ModalCardTitle>
-                    </ModalCardHeader>
-                      <Form
-                        onSubmit = {(values: any) => { this.addApplication(values) }}
-                        render   = {({ handleSubmit, pristine, invalid }) => (
-                          <form onSubmit={handleSubmit}>
-                            <ModalCardBody>
-                              {/* <div id="submitStatus" className="notification"></div> */}
-                              <div className="field">
-                                <label className="label">Application Name</label>
-                                <div className="control">
-                                  <Field
-                                    name        = "name"
-                                    type        = "text"
-                                    placeholder = "Application Name"
-                                    component   = { TextInput }
-                                  />
-                                </div>
+            { session =>  (
+              <TeamsConsumer>
+                { teams => (applications && session && teams) && (
+                  <div>
+                    <Modal isActive={this.state.createModalActive}>
+                      <form id="submitAppForm" onSubmit={this.submitApplication}>
+                        <ModalBackground onClick={this.toggleCreateModal} />
+                        <ModalCard>
+                          <ModalCardHeader>
+                            <ModalCardTitle>Add Application</ModalCardTitle>
+                            <button type='button' className='modal-close is-large' onClick={this.toggleCreateModal}></button>
+                          </ModalCardHeader>
+                          <ModalCardBody>
+                            <div id="formNotification">
+                              {this.state.formNotification}
+                            </div>
+                            <div className="field">
+                              <Label>Application Name</Label>
+                              <div className="control">
+                                <Input name="applicationName" />
                               </div>
+                            </div>
 
-                              <div className="field">
-                                <label className="label">Team ID (Optional)</label>
-                                <div className="control">
-                                  <Field
-                                    name      = "teamId"
-                                    type      = "number"
-                                    component = { TextInput }
-                                  />
-                                </div>
-                              </div>
-                            </ModalCardBody>
-                            <ModalCardFooter>
-                              <Button isColor='success' type='submit' disabled={pristine || invalid}>Add</Button>
-                              <Button isColor='danger' onClick={this.toggleCreateModal}>Cancel</Button>
-                            </ModalCardFooter>
-                          </form>
-                        )} 
-                      />
-                  </ModalCard>
-                </Modal>
+                            <div className="field">
+                              <Label>Team (Optional)</Label>
+                              <Control>
+                                <Select defaultValue='none' name='teamId'>
+                                  <option key='none' value='none'>None</option>
+                                  { teams.map(team => <option key={team.id} value={team.id}>{team.name}</option>) }
+                                </Select>
+                              </Control>
+                            </div>
+                          </ModalCardBody>
+                          <ModalCardFooter>
+                            <Button isColor='success' type='submit'>Add</Button>
+                          </ModalCardFooter>
+                        </ModalCard>
+                      </form>
+                    </Modal>
 
-                <Container isFluid style={{ marginTop: 20, marginLeft: '3.5rem' }}>
-                  <div className="allInline 10pbottom">
-                    <Title className="main-title" isSize={3}>Applications</Title>
-                    <Button onClick={this.toggleCreateModal} className="addButton" isColor='success'>Create</Button>
+
+                    <Container isFluid style={{ marginTop: 20, marginLeft: '3.5rem' }}>
+                      <div className="allInline pbottom10">
+                        <Title className="main-title" isSize={3}>Applications</Title>
+                        <Button onClick={this.toggleCreateModal} className="addButton" isColor='success'>Create</Button>
+                      </div>
+                      <Container isFluid className="containerList" style={{ border: '1px solid', borderRadius: 5, padding: 10 }}>
+                        {applications.map((application) => (
+                          <Link key={application.id} passHref href={`/app/logs?id=${application.id}`} as={`/app/application/${application.id}/logs`}>
+                            <Button isColor='info'>{application.name}</Button>
+                          </Link>
+                        ))}
+                      </Container>
+                    </Container>
                   </div>
-                  <Container isFluid className="containerList" style={{ border: '1px solid', borderRadius: 5, padding: 10 }}>
-                    {applications.map((application) => (
-                      <Link key={application.id} passHref href={`/app/logs?id=${application.id}`} as={`/app/application/${application.id}/logs`}>
-                        <Button isColor='info'>{application.name}</Button>
-                      </Link>
-                    ))}
-                  </Container>
-                </Container>
-              </div>
+                )}
+              </TeamsConsumer>
             )}
           </SessionConsumer>
         )}

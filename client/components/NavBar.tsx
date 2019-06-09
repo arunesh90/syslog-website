@@ -21,7 +21,7 @@ export default class AppNavBar extends Component<NavBarProps> {
           <Navbar className="custom-navbar" style={{backgroundColor: 'rgb(44, 57, 71)'}}>
             <NavbarBrand>
               <NavbarItem>
-                <Link prefetch passHref href={'/app/dashboard'}>
+                <Link prefetch passHref href={'/app/dashboard?item=main'} as={'/app/dashboard'}>
                   <a>
                     <figure className="image is-32x32">
                       <img src="/static/img/logIcon.svg" style={{ transform: 'scale(1.25)' }} />
