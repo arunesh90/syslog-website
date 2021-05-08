@@ -71,6 +71,6 @@
     "react-router-dom": "^5.0.0",
     "react-spinners": "^0.5.4",
     "source-map-support": "^0.5.12",
-    "typeorm": "^0.2.15-rc.2"
+    "typeorm": "^0.2.25"
   }
 }
